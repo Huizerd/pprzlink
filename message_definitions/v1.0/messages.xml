@@ -1721,6 +1721,8 @@
             <field name="D" type="float"/>
             <field name="Ddot" type="float"/>
             <field name="h" type="float"/>
+            <field name="h_enu" type="float"/>
+            <field name="msl" type="float"/>
             <field name="v" type="float"/>
             <field name="a_raw" type="float"/>
             <field name="a_lp" type="float"/>
