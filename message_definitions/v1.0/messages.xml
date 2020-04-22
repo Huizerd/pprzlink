@@ -1715,7 +1715,15 @@
             <field name="p" type="float" unit="pascal"/>
         </message>
 
-        <!-- 211 is free -->
+        <message name="NN_LANDING"  id="211">
+            <field name="D"         type="float"/>
+            <field name="Ddot"      type="float"/>
+            <field name="a"         type="float"/>
+            <field name="v"         type="float"/>
+            <field name="h"         type="float"/>
+            <field name="T"         type="float"/>
+            <field name="mode"      type="uint8"/>
+        </message>
 
         <message name="SPIKING_LANDING" id="212">
             <field name="D" type="float"/>
