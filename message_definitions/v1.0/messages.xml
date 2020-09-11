@@ -1728,6 +1728,8 @@
         <message name="SPIKING_LANDING" id="212">
             <field name="D" type="float"/>
             <field name="Ddot" type="float"/>
+            <field name="x" type="float"/>
+            <field name="y" type="float"/>
             <field name="h" type="float"/>
             <field name="h_enu" type="float"/>
             <field name="msl" type="float"/>
