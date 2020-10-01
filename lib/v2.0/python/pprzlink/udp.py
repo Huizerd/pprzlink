@@ -5,6 +5,8 @@ from __future__ import absolute_import, division, print_function
 
 import threading
 import socket
+import logging
+import struct
 
 # load pprzlink messages and transport
 from pprzlink.message import PprzMessage
@@ -13,6 +15,9 @@ from pprzlink.pprz_transport import PprzTransport
 # default port
 UPLINK_PORT = 4243
 DOWNLINK_PORT = 4242
+
+
+logger = logging.getLogger("PprzLink")
 
 
 class UdpMessagesInterface(threading.Thread):
@@ -34,12 +39,12 @@ class UdpMessagesInterface(threading.Thread):
             self.server.settimeout(2.0)
             self.server.bind(('0.0.0.0', self.downlink_port))
         except OSError:
-            print("Error: unable to open socket on ports '%d' (up) and '%d' (down)" % (self.uplink_port, self.downlink_port))
+            logger.error("Error: unable to open socket on ports '%d' (up) and '%d' (down)" % (self.uplink_port, self.downlink_port))
             exit(0)
         self.trans = PprzTransport(msg_class)
 
     def stop(self):
-        print("End thread and close UDP link")
+        logger.info("End thread and close UDP link")
         self.running = False
         self.server.close()
 
@@ -71,13 +76,20 @@ class UdpMessagesInterface(threading.Thread):
                     (msg, address) = self.server.recvfrom(2048)
                     length = len(msg)
                     for c in msg:
+                        #Compatibility with Python2 and Python3
+                        if not isinstance(c, bytes):
+                            c = struct.pack("B",c)
                         if self.trans.parse_byte(c):
-                            (sender_id, receiver_id, component_id, msg) = self.trans.unpack()
-                            if self.verbose:
-                                print("New incoming message '%s' from %i (%i, %s) to %i" % (msg.name, sender_id, component_id, address, receiver_id))
-                            # Callback function on new message
-                            if self.id is None or self.id == receiver_id:
-                                self.callback(sender_id, address, msg, length, receiver_id, component_id)
+                            try:
+                                (sender_id, receiver_id, component_id, msg) = self.trans.unpack()
+                            except ValueError as e:
+                                logger.warning("Ignoring unknown message, %s" % e)
+                            else:
+                                if self.verbose:
+                                    logger.info("New incoming message '%s' from %i (%i, %s) to %i" % (msg.name, sender_id, component_id, address, receiver_id))
+                                # Callback function on new message
+                                if self.id is None or self.id == receiver_id or receiver_id == 255:
+                                    self.callback(sender_id, address, msg, length, receiver_id, component_id)
                 except socket.timeout:
                     pass
 

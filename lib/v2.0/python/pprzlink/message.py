@@ -181,7 +181,10 @@ class PprzMessage(object):
             if "char[" in t:
                 str_value =''
                 for c in self.fieldvalues[idx]:
-                    str_value += c
+                    if isinstance(c, bytes):
+                        str_value += c.decode()
+                    else:
+                        str_value += c
                 ivy_str += '"' + str_value + '"'
             elif '[' in t:
                 ivy_str += ','.join([str(x) for x in self.fieldvalues[idx]])
@@ -238,6 +241,8 @@ class PprzMessage(object):
                         data.append(float(x))
                     elif bin_type[0]== 'B' or bin_type[0]== 'H' or bin_type[0]== 'L' or bin_type[0]== 'b' or bin_type[0]== 'h' or bin_type[0]== 'l':
                         data.append(int(x))
+                    elif bin_type[0]== 'c':
+                        data.append(x.encode())
                     else:
                         data.append(x)
             else:
