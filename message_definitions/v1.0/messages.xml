@@ -661,6 +661,7 @@
       <field name="v" type="float"/>
       <field name="a_raw" type="float"/>
       <field name="a_lp" type="float"/>
+      <field name="T_raw" type="float"/>
       <field name="T" type="float"/>
       <field name="mode" type="uint8"/>
       <field name="record" type="uint8"/>
